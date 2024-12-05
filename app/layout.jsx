@@ -1,4 +1,6 @@
 import "@/assets/styles/globals.css";
+import Footer from "@/components/Footer";
+import NavBar from "@/components/Navbar";
 
 export const metadata = {
   title: "My Next.js App",
@@ -11,7 +13,10 @@ const MainLayout = ({ children }) => {
   return (
     <html>
       <body>
+        <NavBar />
         <main>{children}</main>
+        
+        <Footer />
       </body>
     </html>
   );
