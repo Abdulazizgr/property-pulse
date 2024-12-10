@@ -1,30 +1,53 @@
-// "use client";
+import connectDB from "@/config/database";
+import Property from "@/models/Property";
+import PropertyHeaderImage from "@/components/PropertyHeaderImage";
+import PropertyDetails from "@/components/PropertyDetails";
+import Link from "next/link";
+import { FaArrowLeft, FaLocationArrow } from "react-icons/fa";
 
-// Uncomment the "use client" directive if using React components that require it
-"use client";
+const PropertyPage = async ({ params }) => {
+  // Ensure params are awaited before use
+  const id = params?.id; // Destructure `id` from params
 
-import { useRouter, useParams, useSearchParams, usePathname } from "next/navigation";
+  // Connect to the database
+  await connectDB();
 
-const PropertyPage = ({ params, searchParams }) => {
-  const router = useRouter();
-  const localParams = useParams(); // Only use if required
-  const localSearchParams = useSearchParams(); // Only use if required
-  const pathname = usePathname(); // Only use if required
+  // Fetch the property using the ID
+  const property = await Property.findById(id).lean();
+
+  // Check if property is found
+  if (!property) {
+    return <div className="text-2xl">Property not found</div>;
+  }
 
   return (
-    <div className="text-2xl">
-      Property Page {searchParams?.name}
-      {/* Uncomment if you want to render more details */}
-      {/* <div className="text-2xl">Dynamic Route ID: {localParams?.id}</div> */}
-      {/* <div className="text-2xl">Search Param Name: {localSearchParams?.get("name")}</div> */}
-      {/* <div className="text-2xl">Current Pathname: {pathname}</div> */}
-      {/* <button
-        className="block ml-4 mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        onClick={() => router.replace("/")}
-      >
-        Go to Home
-      </button> */}
-    </div>
+    <>
+      <PropertyHeaderImage image={property.images[0]} />
+
+      {/* <!-- Go Back --> */}
+      <section>
+        <div className="container m-auto py-6 px-6">
+          <Link
+            href="/properties"
+            className="text-blue-500 hover:text-blue-600 flex items-center"
+          >
+            {/* <i className="fas fa-arrow-left mr-2"></i>  */}
+            <FaArrowLeft className="mr-2" />
+            Back to Properties
+          </Link>
+        </div>
+      </section>
+
+      {/* <!-- Property Info --> */}
+      <section className="bg-blue-50">
+        <div className="container m-auto py-10 px-6">
+          <div className="grid grid-cols-1 md:grid-cols-70/30 w-full gap-6">
+            {/* <!-- Property Details --> */}
+            <PropertyDetails property={property} />
+          </div>
+        </div>
+      </section>
+    </>
   );
 };
 
