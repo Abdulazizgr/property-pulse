@@ -1,8 +1,30 @@
 import Image from "next/image";
 import Link from "next/link";
 import profile from "@/assets/images/profile.png";
+import connectDB from "@/config/database";
+import Property from "@/models/Property";
+import { getSessionUser } from "@/utils/getSessionUser";
+import ProfileProperties from "@/components/ProfileProperties";
+import { convertToSerializeableObject } from "@/utils/convertToObject";
 
-const Profile = () => {
+const ProfilePage = async () => {
+  await connectDB();
+
+  const sessionUser = await getSessionUser();
+
+  const { userId } = sessionUser;
+  // console.log("user Id", userId);
+
+  if (!userId) {
+    throw new Error("User not found");
+  }
+
+  const propertiesDocs = await Property.find({ Owner: userId }).lean();
+  const properties = propertiesDocs.map((property) =>
+    convertToSerializeableObject(property)
+  );
+
+  console.log("properties", properties);
   return (
     <section className="bg-blue-50">
       <div className="container m-auto py-24">
@@ -13,75 +35,26 @@ const Profile = () => {
               <div className="mb-4">
                 <Image
                   className="h-32 w-32 md:h-48 md:w-48 rounded-full mx-auto md:mx-0"
-                  src={profile}
+                  src={sessionUser.user.image || profile}
+                  width={200}
+                  height={200}
                   alt="User"
                 />
               </div>
 
               <h2 className="text-2xl mb-4">
-                <span className="font-bold block">Name: </span> John Doe
+                <span className="font-bold block">Name: </span>{" "}
+                {sessionUser.user.name}
               </h2>
               <h2 className="text-2xl">
-                <span className="font-bold block">Email: </span> john@gmail.com
+                <span className="font-bold block">Email: </span>{" "}
+                {sessionUser.user.email}
               </h2>
             </div>
 
             <div className="md:w-3/4 md:pl-4">
               <h2 className="text-xl font-semibold mb-4">Your Listings</h2>
-              <div className="mb-10">
-                <Link href="/property">
-                  <img
-                    className="h-32 w-full rounded-md object-cover"
-                    src="/images/properties/a1.jpg"
-                    alt="Property 1"
-                  />
-                </Link>
-                <div className="mt-2">
-                  <p className="text-lg font-semibold">Property Title 1</p>
-                  <p className="text-gray-600">Address: 123 Main St</p>
-                </div>
-                <div className="mt-2">
-                  <Link
-                    href="/property/add"
-                    className="bg-blue-500 text-white px-3 py-3 rounded-md mr-2 hover:bg-blue-600"
-                  >
-                    Edit
-                  </Link>
-                  <button
-                    className="bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600"
-                    type="button"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-              <div className="mb-10">
-                <Link href="/properties">
-                  <img
-                    className="h-32 w-full rounded-md object-cover"
-                    src="/images/properties/b1.jpg"
-                    alt="Property 2"
-                  />
-                </Link>
-                <div className="mt-2">
-                  <p className="text-lg font-semibold">Property Title 2</p>
-                  <p className="text-gray-600">Address: 456 Elm St</p>
-                </div>
-                <div className="mt-2">
-                  <Link
-                    href="/properties/add"
-                    className="bg-blue-500 text-white px-3 py-3 rounded-md mr-2 hover:bg-blue-600"
-                  >
-                    Edit
-                  </Link>
-                  <button
-                    className="bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600"
-                    type="button"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
+              <ProfileProperties properties={properties} />
             </div>
           </div>
         </div>
@@ -90,4 +63,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default ProfilePage;
