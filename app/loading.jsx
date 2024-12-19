@@ -11,7 +11,7 @@ const LoadingPage = () => {
     <ClipLoader
       color="#3B82F6"
       cssOverride={override}
-      arial-label="Loading Spinner"
+      aria-label="Loading Spinner"  
       size={150}
     />
   );

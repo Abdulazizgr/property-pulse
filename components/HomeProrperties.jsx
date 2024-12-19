@@ -16,7 +16,9 @@ const HomeProperties = async () => {
     <>
       <section className="px-4 py-6">
         <div className="container-xl lg:container mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-center mb-6 text-blue-500"></h1>
+          <h1 className="text-3xl font-bold text-center mb-6 text-blue-500">
+            Recent Properties
+          </h1>
           {/* <!-- Properties --> */}
           {RecentProperties.length === 0 ? (
             <p>No Properties Found</p>

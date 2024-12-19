@@ -5,7 +5,7 @@ import Link from "next/link";
 import ConnectDB from "@/config/database";
 
 const HomePage = () => {
-  ConnectDB();
+  // ConnectDB();
   // console.log(process.env.MONGODB_URI);
   return (
     <>

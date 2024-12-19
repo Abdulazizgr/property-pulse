@@ -24,7 +24,7 @@ const ProfilePage = async () => {
     convertToSerializeableObject(property)
   );
 
-  console.log("properties", properties);
+  // console.log("properties", properties);
   return (
     <section className="bg-blue-50">
       <div className="container m-auto py-24">
