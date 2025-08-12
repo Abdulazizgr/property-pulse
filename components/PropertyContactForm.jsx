@@ -1,105 +1,116 @@
-'use client';
-import { useEffect } from 'react';
-import { useFormState } from 'react-dom';
-import { useSession } from 'next-auth/react';
-import { toast } from 'react-toastify';
-import addMessage from '@/app/action/addMessage';
-import SubmitMessageButton from './SubmitMessageButton';
+"use client";
+import { useEffect } from "react";
+import { useFormState } from "react-dom";
+import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
+import addMessage from "@/app/action/addMessage";
+import SubmitMessageButton from "./SubmitMessageButton";
+// import { getSessionUser } from "@/utils/getSessionUser";
+// import connectDB from "@/config/database";
 
 const PropertyContactForm = ({ property }) => {
   const { data: session } = useSession();
+  // await connectDB();
+
+  // const sessionUser = await getSessionUser();
+
+  // const { userId } = sessionUser;
+  console.log(property);
 
   const [state, formAction] = useFormState(addMessage, {});
 
   useEffect(() => {
     if (state.error) toast.error(state.error);
-    if (state.submitted) toast.success('Message sent successfully');
+    if (state.submitted) toast.success("Message sent successfully");
   }, [state]);
 
   if (state.submitted) {
     return (
-      <p className='text-green-500 mb-4'>
+      <p className="text-green-500 mb-4">
         Your message has been sent successfully
       </p>
     );
   }
+  // if (userId === property.owner) {
+  //   return null;
+  // }
 
   return (
     session && (
-      <div className='bg-white p-6 rounded-lg shadow-md'>
-        <h3 className='text-xl font-bold mb-6'>Contact Property Manager</h3>
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <h3 className="text-xl font-bold mb-6">Contact Property Manager</h3>
         <form action={formAction}>
           <input
-            type='hidden'
-            id='property'
-            name='property'
+            type="hidden"
+            id="property"
+            name="property"
             defaultValue={property._id}
           />
           <input
-            type='hidden'
-            id='recipient'
-            name='recipient'
+            type="hidden"
+            id="recipient"
+            name="recipient"
             defaultValue={property.owner}
           />
-          <div className='mb-4'>
+          <div className="mb-4">
             <label
-              className='block text-gray-700 text-sm font-bold mb-2'
-              htmlFor='name'
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="name"
             >
               Name:
             </label>
             <input
-              className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-              id='name'
-              name='name'
-              type='text'
-              placeholder='Enter your name'
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="name"
+              name="name"
+              type="text"
+              placeholder="Enter your name"
               required
             />
           </div>
-          <div className='mb-4'>
+          <div className="mb-4">
             <label
-              className='block text-gray-700 text-sm font-bold mb-2'
-              htmlFor='email'
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="email"
             >
               Email:
             </label>
             <input
-              className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-              id='email'
-              name='email'
-              type='email'
-              placeholder='Enter your email'
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Enter your email"
               required
             />
           </div>
-          <div className='mb-4'>
+          <div className="mb-4">
             <label
-              className='block text-gray-700 text-sm font-bold mb-2'
-              htmlFor='phone'
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="phone"
             >
               Phone:
             </label>
             <input
-              className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-              id='phone'
-              name='phone'
-              type='text'
-              placeholder='Enter your phone number'
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="phone"
+              name="phone"
+              type="text"
+              placeholder="Enter your phone number"
             />
           </div>
-          <div className='mb-4'>
+          <div className="mb-4">
             <label
-              className='block text-gray-700 text-sm font-bold mb-2'
-              htmlFor='message'
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="message"
             >
               Message:
             </label>
             <textarea
-              className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 h-44 focus:outline-none focus:shadow-outline'
-              id='message'
-              name='message'
-              placeholder='Enter your message'
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 h-44 focus:outline-none focus:shadow-outline"
+              id="message"
+              name="message"
+              placeholder="Enter your message"
             ></textarea>
           </div>
           <div>

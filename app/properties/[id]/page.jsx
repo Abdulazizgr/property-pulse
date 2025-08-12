@@ -9,6 +9,7 @@ import PropertyImages from "@/components/PropertyImages";
 import Link from "next/link";
 import { convertToSerializeableObject } from "@/utils/convertToObject";
 import { FaArrowLeft, FaLocationArrow } from "react-icons/fa";
+import { getSessionUser } from "@/utils/getSessionUser";
 
 const PropertyPage = async ({ params }) => {
   // Ensure params are awaited before use
@@ -16,10 +17,13 @@ const PropertyPage = async ({ params }) => {
 
   // Connect to the database
   await connectDB();
+  const sessionUser = await getSessionUser();
 
+  const { userId } = sessionUser;
   // Fetch the property using the ID
   const propertyDoc = await Property.findById(id).lean();
   const property = convertToSerializeableObject(propertyDoc);
+  const isOwner = property.owner !== userId;
   // Check if property is found
   if (!property) {
     throw new Error("Property not found");
@@ -51,8 +55,8 @@ const PropertyPage = async ({ params }) => {
             <PropertyDetails property={property} />
             <aside className="space-y-4">
               <BookmarkButton property={property} />
-              <ShareButtons property = {property}/>
-              <PropertyContactForm property={property} />
+              <ShareButtons property={property} />
+              {isOwner && <PropertyContactForm property={property} />}
             </aside>
           </div>
         </div>
