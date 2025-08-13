@@ -9,12 +9,10 @@ const MessagePage = async () => {
   await connectDB();
 
   const sessionUser = await getSessionUser();
-
   const { userId } = sessionUser;
-  console.log(userId);
 
   const readMessages = await Message.find({ recipient: userId, read: true })
-    .sort({ createdAt: -1 }) // Sort read messages in asc order
+    .sort({ createdAt: -1 })
     .populate("sender", "username")
     .populate("property", "name")
     .lean();
@@ -23,29 +21,29 @@ const MessagePage = async () => {
     recipient: userId,
     read: false,
   })
-    .sort({ createdAt: -1 }) // Sort read messages in asc order
+    .sort({ createdAt: -1 })
     .populate("sender", "username")
     .populate("property", "name")
     .lean();
 
-  // Convert to serializable object so we can pass to client component.
   const messages = [...unreadMessages, ...readMessages].map((messageDoc) => {
     const message = convertToSerializeableObject(messageDoc);
     message.sender = convertToSerializeableObject(messageDoc.sender);
     message.property = convertToSerializeableObject(messageDoc.property);
     return message;
   });
-  console.log("messages:", messages);
 
   return (
-    <section className="bg-blue-50">
-      <div className="container m-auto py-24 max-w-6xl">
-        <div className="bg-white px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0">
-          <h1 className="text-3xl font-bold mb-4">Your Messages</h1>
+    <section className="bg-gray-50 min-h-screen py-12">
+      <div className="container mx-auto px-4 max-w-5xl">
+        <div className="bg-white shadow-lg rounded-lg border border-gray-100 p-6">
+          <h1 className="text-3xl font-bold mb-6">Your Messages</h1>
 
           <div className="space-y-4">
             {messages.length === 0 ? (
-              <p>You have no messages</p>
+              <p className="text-gray-500 text-center py-6">
+                You have no messages
+              </p>
             ) : (
               messages.map((message) => (
                 <MessageCard key={message._id} message={message} />
@@ -57,4 +55,5 @@ const MessagePage = async () => {
     </section>
   );
 };
+
 export default MessagePage;

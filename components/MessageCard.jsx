@@ -8,7 +8,6 @@ import { useGlobalContext } from "@/context/GlobalContext";
 const MessageCard = ({ message }) => {
   const [isRead, setIsRead] = useState(message.read);
   const [isDeleted, setIsDeleted] = useState(false);
-
   const { setUnreadCount } = useGlobalContext();
 
   const handleReadClick = async () => {
@@ -25,33 +24,43 @@ const MessageCard = ({ message }) => {
     toast.success("Message Deleted");
   };
 
-  if (isDeleted) {
-    return <p>Deleted message</p>;
-  }
+  if (isDeleted) return null;
 
   return (
-    <div className="relative bg-white p-4 rounded-md shadow-md border border-gray-200">
+    <div className="relative bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition duration-200 flex flex-col">
+      {/* New Badge */}
       {!isRead && (
-        <div className="absolute top-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded-md">
+        <span className="absolute top-4 right-4 bg-yellow-400 text-white px-3 py-1 rounded-full text-xs font-semibold shadow">
           New
-        </div>
+        </span>
       )}
-      <h2 className="text-xl mb-4">
-        <span className="font-bold">Property Inquiry:</span>{" "}
-        {message.property.name}
-      </h2>
-      <p className="text-gray-700">{message.body}</p>
 
-      <ul className="mt-4">
+      {/* Header */}
+      <h2 className="text-xl font-semibold mb-3">
+        Property Inquiry:{" "}
+        <span className="text-blue-600">{message.property.name}</span>
+      </h2>
+
+      {/* Message Body */}
+      <p className="text-gray-700 mb-4">{message.body}</p>
+
+      {/* Contact Info */}
+      <ul className="text-sm text-gray-600 space-y-1 mb-4">
         <li>
-          <strong>Reply Email:</strong>{" "}
-          <a href={`mailto:${message.email}`} className="text-blue-500">
+          <strong>Email:</strong>{" "}
+          <a
+            href={`mailto:${message.email}`}
+            className="text-blue-500 hover:underline"
+          >
             {message.email}
           </a>
         </li>
         <li>
-          <strong>Reply Phone:</strong>{" "}
-          <a href={`tel:${message.phone}`} className="text-blue-500">
+          <strong>Phone:</strong>{" "}
+          <a
+            href={`tel:${message.phone}`}
+            className="text-blue-500 hover:underline"
+          >
             {message.phone}
           </a>
         </li>
@@ -60,20 +69,26 @@ const MessageCard = ({ message }) => {
           {new Date(message.createdAt).toLocaleString()}
         </li>
       </ul>
-      <button
-        onClick={handleReadClick}
-        className={`mt-4 mr-3 ${
-          isRead ? "bg-gray-300" : "bg-blue-500 text-white"
-        } py-1 px-3 rounded-md`}
-      >
-        {isRead ? "Mark As New" : "Mark As Read"}
-      </button>
-      <button
-        onClick={handleDeleteClick}
-        className="mt-4 bg-red-500 text-white py-1 px-3 rounded-md"
-      >
-        Delete
-      </button>
+
+      {/* Actions */}
+      <div className="mt-auto flex gap-3 justify-end">
+        <button
+          onClick={handleReadClick}
+          className={`py-2 px-4 rounded-md ${
+            isRead
+              ? "bg-gray-300 text-gray-700"
+              : "bg-blue-500 text-white hover:bg-blue-600"
+          } transition`}
+        >
+          {isRead ? "Mark as New" : "Mark as Read"}
+        </button>
+        <button
+          onClick={handleDeleteClick}
+          className="py-2 px-4 rounded-md bg-red-500 text-white hover:bg-red-600 transition"
+        >
+          Delete
+        </button>
+      </div>
     </div>
   );
 };

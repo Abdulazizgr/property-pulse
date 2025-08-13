@@ -1,22 +1,20 @@
 import Image from "next/image";
-import Link from "next/link";
-import profile from "@/assets/images/profile.png";
 import connectDB from "@/config/database";
+import profile from "@/assets/images/profile.png";
 import Property from "@/models/Property";
 import { getSessionUser } from "@/utils/getSessionUser";
 import ProfileProperties from "@/components/ProfileProperties";
 import { convertToSerializeableObject } from "@/utils/convertToObject";
+import { redirect } from "next/navigation";
 
 const ProfilePage = async () => {
   await connectDB();
 
   const sessionUser = await getSessionUser();
-
-  const { userId } = sessionUser;
-  // console.log("user Id", userId);
+  const { userId } = sessionUser || {};
 
   if (!userId) {
-    throw new Error("User not found");
+    redirect("/login");
   }
 
   const propertiesDocs = await Property.find({ Owner: userId }).lean();
@@ -24,37 +22,49 @@ const ProfilePage = async () => {
     convertToSerializeableObject(property)
   );
 
-  // console.log("properties", properties);
   return (
-    <section className="bg-blue-50">
-      <div className="container m-auto py-24">
-        <div className="bg-white px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0">
-          <h1 className="text-3xl font-bold mb-4">Your Profile</h1>
-          <div className="flex flex-col md:flex-row">
-            <div className="md:w-1/4 mx-20 mt-10">
-              <div className="mb-4">
-                <Image
-                  className="h-32 w-32 md:h-48 md:w-48 rounded-full mx-auto md:mx-0"
-                  src={sessionUser.user.image || profile}
-                  width={200}
-                  height={200}
-                  alt="User"
-                />
-              </div>
+    <section className="bg-gray-50 min-h-screen py-12">
+      <div className="container mx-auto px-4">
+        <div className="bg-white shadow-lg rounded-lg overflow-hidden border border-gray-100">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-blue-700 to-blue-400 p-6 text-white">
+            <h1 className="text-3xl font-bold">Your Profile</h1>
+            <p className="text-sm opacity-90">
+              Manage your personal details and listings
+            </p>
+          </div>
 
-              <h2 className="text-2xl mb-4">
-                <span className="font-bold block">Name: </span>{" "}
-                {sessionUser.user.name}
+          {/* Profile Content */}
+          <div className="flex flex-col md:flex-row gap-8 p-6">
+            {/* Left Column - Profile Info */}
+            <div className="md:w-1/3 lg:w-1/4 flex flex-col items-center text-center md:text-left">
+              <Image
+                className="rounded-full border-4 border-white shadow-lg"
+                src={sessionUser?.user?.image || profile}
+                width={160}
+                height={160}
+                alt={sessionUser?.user?.name || "User"}
+              />
+              <h2 className="text-2xl font-semibold mt-4">
+                {sessionUser?.user?.name}
               </h2>
-              <h2 className="text-2xl">
-                <span className="font-bold block">Email: </span>{" "}
-                {sessionUser.user.email}
-              </h2>
+              <p className="text-gray-600">{sessionUser?.user?.email}</p>
             </div>
 
-            <div className="md:w-3/4 md:pl-4">
-              <h2 className="text-xl font-semibold mb-4">Your Listings</h2>
-              <ProfileProperties properties={properties} />
+            {/* Right Column - Listings */}
+            <div className="md:w-2/3 lg:w-3/4">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold">
+                  Your Listings ({properties.length})
+                </h2>
+              </div>
+              {properties.length > 0 ? (
+                <ProfileProperties properties={properties} />
+              ) : (
+                <p className="text-gray-500 italic">
+                  You haven’t added any properties yet.
+                </p>
+              )}
             </div>
           </div>
         </div>
